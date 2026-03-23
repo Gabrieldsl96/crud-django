@@ -1,0 +1,65 @@
+{% extends 'base.html' %} {% block titulo %}Produtos{% endblock %} {% block
+conteudo %}
+<div class="flex items-center justify-between mb-6">
+  <h1 class="text-2xl font-bold text-gray-800">Produtos</h1>
+  <a
+    href="{% url 'produtos:criar' %}"
+    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+  >
+    + Novo Produto
+  </a>
+</div>
+
+{% if produtos %}
+<div class="bg-white rounded-xl shadow overflow-hidden">
+  <table class="w-full text-sm">
+    <thead class="bg-gray-50 text-gray-600 uppercase text-xs">
+      <tr>
+        <th class="px-6 py-3 text-left">#</th>
+        <th class="px-6 py-3 text-left">Nome</th>
+        <th class="px-6 py-3 text-left">Descrição</th>
+        <th class="px-6 py-3 text-right">Preço</th>
+        <th class="px-6 py-3 text-right">Estoque</th>
+        <th class="px-6 py-3 text-left">Criado em</th>
+        <th class="px-6 py-3 text-center">Ações</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-100">
+      {% for produto in produtos %}
+      <tr class="hover:bg-gray-50">
+        <td class="px-6 py-4 text-gray-500">{{ produto.pk }}</td>
+        <td class="px-6 py-4 font-medium text-gray-800">{{ produto.nome }}</td>
+        <td class="px-6 py-4 text-gray-600 max-w-xs truncate">
+          {{ produto.descricao|default:"—" }}
+        </td>
+        <td class="px-6 py-4 text-right text-gray-800 font-medium">
+          R$ {{ produto.preco }}
+        </td>
+        <td class="px-6 py-4 text-right text-gray-600">
+          {{ produto.estoque }}
+        </td>
+        <td class="px-6 py-4 text-gray-500">
+          {{ produto.criado_em|date:"d/m/Y" }}
+        </td>
+        <td class="px-6 py-4 text-center space-x-2">
+          <a
+            href="{% url 'produtos:editar' produto.pk %}"
+            class="text-blue-600 hover:underline font-medium"
+            >Editar</a
+          >
+          <a
+            href="{% url 'produtos:deletar' produto.pk %}"
+            class="text-red-500 hover:underline font-medium"
+            >Excluir</a
+          >
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="bg-white rounded-xl shadow p-10 text-center text-gray-400">
+  Nenhum produto cadastrado ainda.
+</div>
+{% endif %} {% endblock %}
