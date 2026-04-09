@@ -1,12 +1,12 @@
-# CRUD Básico — Django + PostgreSQL + Tailwind
+# CRUD Básico — Django + SQLite + Tailwind
 
-CRUD de **Usuários** e **Produtos** construído com Django, PostgreSQL e Tailwind CSS (via CDN).
+CRUD de **Usuários** e **Produtos** construído com Django, SQLite e Tailwind CSS (via CDN).
 
 ## Tecnologias
 
 - Python 3.x
 - Django 6.x
-- PostgreSQL (psycopg2-binary)
+- SQLite (banco embutido no Python)
 - Tailwind CSS (CDN)
 - python-decouple (variáveis de ambiente)
 
@@ -15,7 +15,6 @@ CRUD de **Usuários** e **Produtos** construído com Django, PostgreSQL e Tailwi
 ## Pré-requisitos
 
 - Python 3.10+
-- PostgreSQL instalado e rodando
 - Git
 
 ---
@@ -68,40 +67,54 @@ cp .env.example .env
 SECRET_KEY=sua-secret-key-aqui
 DEBUG=True
 ALLOWED_HOSTS=127.0.0.1,localhost
-
-DB_NAME=crud_basico_db
-DB_USER=postgres
-DB_PASSWORD=sua-senha-aqui
-DB_HOST=localhost
-DB_PORT=5432
 ```
 
-### 5. Crie o banco de dados no PostgreSQL
-
-```sql
-CREATE DATABASE crud_basico_db;
-```
-
-### 6. Execute as migrações
+### 5. Execute as migrações
 
 ```bash
 python manage.py makemigrations
 python manage.py migrate
 ```
 
-### 7. (Opcional) Crie um superusuário para o Admin
+### 6. (Opcional) Crie um superusuário para o Admin
 
 ```bash
 python manage.py createsuperuser
 ```
 
-### 8. Rode o servidor de desenvolvimento
+### 7. Rode o servidor de desenvolvimento
 
 ```bash
 python manage.py runserver
 ```
 
 Acesse: [http://127.0.0.1:8000](http://127.0.0.1:8000)
+
+---
+
+## Arquivos estáticos (CSS, JS, imagens)
+
+Em **desenvolvimento**, o Django serve os estáticos automaticamente — nenhuma ação necessária.
+
+Em **produção**, é preciso coletar todos os arquivos estáticos de cada app num único diretório (`static/`) para que o servidor web (Nginx, Apache, etc.) possa servi-los diretamente.
+
+### Passos para produção
+
+**1. Crie o diretório de saída na raiz do projeto (se ainda não existir):**
+
+```bash
+mkdir static
+```
+
+**2. Execute o collectstatic:**
+
+```bash
+python manage.py collectstatic
+```
+
+O Django irá copiar todos os arquivos de `usuarios/static/`, `produtos/static/` e de qualquer app instalado para a pasta `static/` na raiz. Essa pasta **não é versionada** (está no `.gitignore`).
+
+> ⚠️ Nunca edite arquivos diretamente dentro de `static/` (raiz). Sempre edite nos respectivos `app/static/app/` e rode `collectstatic` novamente.
 
 ---
 
@@ -114,11 +127,21 @@ crud-basico/
 │   ├── urls.py
 │   └── wsgi.py
 ├── usuarios/             # App de usuários
+│   ├── static/
+│   │   └── usuarios/     # Statics do app
+│   │       ├── css/
+│   │       ├── js/
+│   │       └── img/
 │   ├── models.py
 │   ├── views.py          # Function-based views
 │   ├── forms.py
 │   └── urls.py
 ├── produtos/             # App de produtos
+│   ├── static/
+│   │   └── produtos/     # Statics do app
+│   │       ├── css/
+│   │       ├── js/
+│   │       └── img/
 │   ├── models.py
 │   ├── views.py          # Function-based views
 │   ├── forms.py
@@ -133,6 +156,7 @@ crud-basico/
 │       ├── lista.html
 │       ├── form.html
 │       └── confirmar_delecao.html
+├── static/               # Saída do collectstatic (não versionado)
 ├── .env                  # Variáveis de ambiente (não versionado)
 ├── .env.example          # Exemplo de variáveis de ambiente
 ├── .gitignore
